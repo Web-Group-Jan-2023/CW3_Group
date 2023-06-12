@@ -1,0 +1,15 @@
+{
+    "name": "Web Academy",
+    "short_name": "petstore",
+    "description": "CW3 Group Work Pet Store",
+    "icons": [
+        {
+            "src": "assets/icon-store-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "start_url": "index.html",
+    "display": "fullscreen",
+    "background_color": "#B12A34"
+}
