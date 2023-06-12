@@ -218,5 +218,127 @@
     </div>
 </body>
 <script src="items.js"></script>
-
+<script>
+    var app = new Vue({
+        el:"#app",
+        computed:{
+            can_showSubjects(){
+                return this.showSubjects
+            },
+            cartItemCount(){
+                return this.cart.length || "Empty";
+            },
+            canRemoveFromCart(){
+                return this.cart.length > 0
+            },
+            canCheckout(){
+                if(this.userData.phone.match(/^[0-9]+$/) != null & this.userData.name.match(/^[A-Za-z]+$/) != null){
+                    return true
+                }
+                return false
+            },
+            filterItems(){
+                if (this.criteria != "all" & this.criteria != "availability" & this.criteria != "price") {
+                    return this.items.filter(x => x[this.criteria].toLowerCase().includes(this.searchInput)).sort((a,b)=>{
+                        switch (this.order) {
+                            case "ascending":
+                                    if(a[this.criteria] > b[this.criteria]){
+                                        return 1
+                                    }
+                                    if(b[this.criteria] > a[this.criteria]){
+                                        return -1
+                                    }
+                                    return 0
+                                break;
+                            case "descending":
+                                if(a[this.criteria] > b[this.criteria]){
+                                    return -1
+                                }
+                                if(b[this.criteria] > a[this.criteria]){
+                                    return 1
+                                }
+                                return 0
+                            break;
+                        }
+                    })
+                }
+                if (this.criteria == "availability") {
+                    return this.items.filter(x => x["spaces"] > 0)
+                }
+                if (this.criteria == "price") {
+                    return this.items.filter(x => (x["price"]+"").includes(this.searchInput)).sort((a,b)=>{
+                        switch (this.order) {
+                            case "ascending":
+                                    if(a[this.criteria] > b[this.criteria]){
+                                        return 1
+                                    }
+                                    if(b[this.criteria] > a[this.criteria]){
+                                        return -1
+                                    }
+                                    return 0
+                                break;
+                            case "descending":
+                                if(a[this.criteria] > b[this.criteria]){
+                                    return -1
+                                }
+                                if(b[this.criteria] > a[this.criteria]){
+                                    return 1
+                                }
+                                return 0
+                            break;
+                        }
+                    })
+                }
+            }
+        },
+        methods:{
+            addToCart(item){
+                if (item.spaces > 0) {
+                    item.spaces--
+                    const data ={
+                        "cart_id": `${item.lesson[0]}`+`-${item.location[0]}-`+Math.ceil(Math.random()*10000),//adding an item to a cart while generating unique id for all items 
+                        "item": item
+                    }
+                    this.cart.push(data)
+                }
+            },
+            removeFromCart(cart_item){
+                cart_item.spaces++
+                for(let i = 0; i < this.cart.length; i++){
+                    const item = this.cart[i]
+                    if(cart_item.id == item.id){
+                        this.cart.splice(i,1)
+                        break;
+                    }
+                }
+                
+            },
+            submit_cart(){
+                alert("Submitted cart")
+            },
+            checkout(){
+                this.showItems = this.showItems ? false : true
+            },
+            changeCriteria(criteria){
+                this.criteria = criteria
+            },
+            changeOrder(order){
+                this.order = order
+            }
+        },
+        data:{
+            sitename:"Web Academy",
+            criteria:"lesson",
+            order:"ascending",
+            searchInput:"",
+            cart: [],
+            showItems:true,
+            items:[...items],
+            userData:{
+                name:"",
+                phone:"",
+            },
+        }
+    })
+</script>
 </html>
